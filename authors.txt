@@ -1,4 +1,4 @@
-(no author) = (no author)
+(no author) = Nobody <nobody@example.com>
 allenday = Allen Day <allenday@users.sourceforge.net>
 andrew_uzilov = Andrew Uzilov <andrew_uzilov@users.sourceforge.net>
 bmahini = Behzad Mahini <bmahini@users.sourceforge.net>
