@@ -11,7 +11,9 @@ use Path::Class;
 
 use YAML;
 
-my $authors = get_current_author_list();
+my $authors_file = file('authors.txt');
+
+my $authors = get_current_author_list( $authors_file );
 
 # look through the svn repo to find all author SF usernames
 add_svn_authors( $authors );
@@ -24,17 +26,18 @@ add_sourceforge_author_info( $authors );
 # case insensitively)
 add_github_author_info( $authors );
 
+my $authors_out = $authors_file->openw;
 for my $a ( map $authors->{$_}, sort keys %$authors) {
     my $name  = $a->{name} || $a->{sourceforge_login};
     my $email = $a->{email} && " <$a->{email}>" || '';
-    print "$a->{sourceforge_login} = $name$email\n";
+    $authors_out->print( "$a->{sourceforge_login} = $name$email\n" );
 }
 
 
 ##############
 
 sub get_current_author_list {
-    my $authors_file = file('authors.txt');
+    my $authors_file = shift;
 
     my $authors = {};
 
