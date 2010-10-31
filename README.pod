@@ -1,0 +1,17 @@
+=head1 GMOD Sourceforge-to-Github Repository Migration
+
+This repository holds scripts and data related to migrating GMOD
+source code repositories from Sourceforge to GitHub.
+
+=head1 Files in this repository
+
+=head2 make_authors_file.pl
+
+Inspects the current author log, the svn history, and account
+information from SourceForge and GitHub to update the author list.
+
+=head2 update_svn_mirror.sh
+
+Shell script that rsyncs the whole GMOD svn repo to svn_mirror/ in the
+current dir, for use by migration scripts.
+
