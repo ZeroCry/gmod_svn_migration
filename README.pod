@@ -15,3 +15,62 @@ information from SourceForge and GitHub to update the author list.
 Shell script that rsyncs the whole GMOD svn repo to svn_mirror/ in the
 current dir, for use by migration scripts.
 
+=head1 Conversion Process
+
+The process to convert a repo from SourceForge's SVN to git on GitHub
+goes roughly as:
+
+=head3 Set up a work directory for converting
+
+  mkdir gmod_git;
+  cd gmod_git;
+  git clone git@github.com:GMOD/gmod_svn_migration.git
+
+
+=head3 Update your local mirror of the GMOD svn
+
+Use rsync to fetch a mirror of the entire GMOD svn (about 1.6 GB on
+disk, but transfer is compressed):
+
+  cd gmod_svn_migration;
+  ./update_svn_mirror.sh
+
+=head3 Optionally update the authors.txt file
+
+The C<authors.txt> file just gives the mapping of SourceForge user
+names to full names and emails, since the git commit history keeps
+that information.
+
+Run the updater:
+
+  ./update_authors_file.pl
+
+And then look over the authors.txt file manually to make sure the
+updater made good choices for names and emails.  Make any necessary
+manual corrections.  Use C<git diff> and C<git commit> to check and
+commit any changes.
+
+=head3 Convert a repository using svn2git
+
+Use svn2git, available at L<http://github.com/nirvdrum/svn2git> or via
+C<gem install svn2git --source http://gemcutter.org>, along with the
+local SVN mirror and the C<authors.txt> file to convert a GMOD
+project's svn repo to git.
+
+Make a directory for the project you are converting, make sure it is
+B<not> under the C<gmod_svn_migration/> directory.  We'll use GBrowse
+as an example here.
+
+  cd ..
+  mkdir Generic-Genome-Browser
+  svn2git --authors /home/rob/gmod_git/gmod_svn_migration/authors.txt \
+     file:///home/rob/gmod_git/gmod_svn_migration/svn_mirror/Generic-Genome-Browser
+
+After the conversion runs, if all goes well, you should now have a
+full git repository in that directory for the project in question.
+Examine it in the usual C<git> way.
+
+  git log --stat
+  git status
+  # etcetera ...
+
