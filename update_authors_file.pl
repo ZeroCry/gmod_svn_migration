@@ -120,11 +120,6 @@ sub add_sourceforge_author_info {
     print "done.\n";
 }
 
-my $github_cache = Cache::File->new(
-    cache_root      => '.remote_author_info_cache/github',
-    default_expires => '1 day',
-   );
-
 sub add_github_author_info {
     my $authors = shift;
     print "adding author info from GitHub...\n";
