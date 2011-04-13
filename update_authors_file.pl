@@ -76,6 +76,8 @@ sub add_svn_authors {
     my $author_list = $svn_mirror->file('authors_list.txt');
     my $svn_mirror_modtime = $svn_mirror->file('update_stamp')->stat->mtime;
 
+    print "fetching SVN authors from local mirror ...\n";
+
     unless( -e $author_list && $svn_mirror_modtime <= $author_list->stat->mtime ) {
         $author_list->openw->print(
             `svn log -q file://$svn_mirror | grep -e '^r' | awk 'BEGIN { FS = "|" } ; { print \$2 }' | sort | uniq > $author_list`
@@ -87,15 +89,22 @@ sub add_svn_authors {
         s/^\s+|\s+$//g;
         $authors->{$_} ||= { sourceforge_login => $_ };
     }
+
+    print "done.\n";
 }
 
 
 sub add_sourceforge_author_info {
     my $authors = shift;
+
+    print "looking up SourceForge account info ...\n";
+
     for my $author ( values %$authors ) {
         next if $author->{name} && $author->{email};
 
         my $login = $author->{sourceforge_login};
+
+        print "    looking up $login\n";
 
         my $user_page = cached_get("http://sourceforge.net/users/$login");
 
@@ -107,6 +116,8 @@ sub add_sourceforge_author_info {
         $author->{email} ||= $login.'@users.sourceforge.net';
 
     }
+
+    print "done.\n";
 }
 
 my $github_cache = Cache::File->new(
@@ -116,8 +127,11 @@ my $github_cache = Cache::File->new(
 
 sub add_github_author_info {
     my $authors = shift;
+    print "adding author info from GitHub...\n";
     for my $author (values %$authors) {
         my $login = $author->{sourceforge_login};
+
+        print "    looking up $login\n";
 
         my $github_info = cached_get( "http://github.com/api/v2/yaml/user/show/$login" )
             or next;
@@ -132,6 +146,7 @@ sub add_github_author_info {
             $author->{email} = $github_info->{email} || $author->{email};
         }
     }
+    print "done.\n";
 }
 
 # compare names without sensitivity to whitespace or case
