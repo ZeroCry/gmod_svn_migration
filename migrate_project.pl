@@ -4,7 +4,10 @@ use warnings FATAL => 'all';
 use autodie ':all';
 use Path::Class;
 
+use Pod::Usage;
+
 my ( $project_name, $target_dir ) = @ARGV;
+$project_name or pod2usage();
 $target_dir ||= "../$project_name";
 $target_dir = dir( $target_dir );
 
@@ -27,3 +30,17 @@ system( 'svn2git',
       );
 
 print "\n\nYour new git repo is in $target_dir . Please inspect it.\n";
+
+
+=head1 USAGE
+
+  migrate_project.pl  project_name   [ target dir ]
+
+  Example:
+
+     migrate_project.pl Generic-Genome-Browser
+
+  Migrates GBrowse and puts it in the ../Generic-Genome-Browser directory.
+
+=cut
+
